@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アイカツアンコール カードコレクション</title>
+<style>
+:root{
+  --pink:#ff6fae;--pink2:#ffb7d5;--cream:#fff9fc;--ink:#4b4350;
+  --line:#f0dbe5;--shadow:0 8px 24px rgba(110,70,95,.10);
+}
+*{box-sizing:border-box} body{margin:0;background:#fff9fc;color:var(--ink);
+font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic",sans-serif}
+header{position:sticky;top:0;z-index:10;background:rgba(255,249,252,.94);backdrop-filter:blur(12px);
+border-bottom:1px solid var(--line)}
+.header{max-width:1200px;margin:auto;padding:18px 20px;display:flex;align-items:center;gap:16px;justify-content:space-between}
+.logo{font-weight:900;font-size:21px;color:#e95b99}.logo small{display:block;font-size:11px;letter-spacing:.12em;color:#a9919d}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--pink);color:#fff;border-color:var(--pink)}.btn:hover{filter:brightness(.98);transform:translateY(-1px)}
+main{max-width:1200px;margin:auto;padding:22px 20px 50px}
+.hero{background:linear-gradient(135deg,#fff,#fff0f7);border:1px solid var(--line);border-radius:24px;padding:22px;
+display:flex;justify-content:space-between;gap:20px;align-items:center;box-shadow:var(--shadow);margin-bottom:18px}
+.hero h1{margin:0 0 6px;font-size:26px}.hero p{margin:0;color:#8b7782}.count{font-size:30px;font-weight:900;color:var(--pink);white-space:nowrap}
+.toolbar{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow);margin-bottom:18px}
+.search{width:100%;padding:13px 15px;border:1px solid var(--line);border-radius:12px;font-size:16px;outline:none;margin-bottom:12px}
+.search:focus{border-color:var(--pink2);box-shadow:0 0 0 3px #ffe5f0}
+.filters{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.chip{padding:7px 10px;border-radius:99px;background:#fff;border:1px solid var(--line);font-size:12px}
+.completion-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.completion-card{background:white;border:1px solid var(--line);border-radius:14px;padding:12px}
+.completion-top{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:13px}
+.progress{height:9px;background:#f4e9ee;border-radius:99px;overflow:hidden;margin:9px 0 6px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,#ff78b3,#ffb7d5);border-radius:99px}
+.completion-sub{font-size:11px;color:#91818a;display:flex;justify-content:space-between}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);position:relative}
+.thumb{aspect-ratio:0.72;background:linear-gradient(135deg,#ffe9f3,#f7eefb);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}.placeholder{font-size:44px;opacity:.35}
+.cardbody{padding:11px}.name{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.tag{font-size:10px;background:#fff1f7;border-radius:6px;padding:4px 6px;color:#9a5375}
+.cardno{font-size:11px;color:#9b8a94;margin-top:5px}.owned-badge{position:absolute;left:8px;top:8px;padding:5px 8px;border-radius:8px;background:#fff;font-size:10px;font-weight:900;box-shadow:0 2px 8px #0001;color:#777}.owned-badge.owned{color:#d54d91;background:#fff0f7}.owned-badge.notowned{color:#8a7d84}.fav{position:absolute;top:8px;right:8px;border:0;background:#fff;border-radius:50%;width:32px;height:32px;cursor:pointer;box-shadow:0 2px 8px #0001}
+.empty{padding:55px;text-align:center;color:#988893;background:white;border:1px dashed var(--line);border-radius:18px}
+.modal{position:fixed;inset:0;background:#321d2d66;display:none;align-items:center;justify-content:center;padding:18px;z-index:30}
+.modal.show{display:flex}.panel{width:min(600px,100%);max-height:92vh;overflow:auto;background:white;border-radius:22px;padding:20px}
+.panel h2{margin-top:0}.form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800}
+.field input,.field select{padding:11px;border:1px solid var(--line);border-radius:10px}.preview{height:180px;border:1px dashed var(--pink2);border-radius:12px;display:flex;justify-content:center;align-items:center;overflow:hidden;background:#fff8fb}
+.preview img{height:100%;max-width:100%;object-fit:contain}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.note{font-size:11px;color:#9b8a94;margin-top:8px}
+@media(max-width:700px){.header{align-items:flex-start}.logo{font-size:17px}.hero{padding:17px}.hero h1{font-size:21px}.count{font-size:24px}.filters{grid-template-columns:1fr 1fr}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ff6fae">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="アイカツカード">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<header><div class="header">
+  <div class="logo">Aikatsu Encore<small>CARD COLLECTION</small></div>
+  <div class="actions">
+    <button class="btn" onclick="exportData()">データ保存</button>
+    <label class="btn">ファイル取込<input id="dataFile" type="file" accept=".json,.csv" hidden></label>
+    <button class="btn primary" onclick="openModal()">＋ カード追加</button>
+  </div>
+</div></header>
+
+<main>
+<section class="hero">
+  <div><h1>カードコレクション</h1><p>お気に入りのカードを、すっきり・かんたんに管理。</p></div>
+  <div class="count"><span id="total">0</span><small style="font-size:12px;color:#8b7782"> 枚</small></div>
+</section>
+
+<section class="toolbar">
+  <input id="search" class="search" placeholder="🔎 カード名・カード番号・ブランドなどで検索…">
+  <div class="filters">
+    <select id="series"><option value="">弾数：すべて</option></select>
+    <select id="promo"><option value="">区分：すべて</option><option>通常</option><option>プロモ</option></select>
+    <select id="type"><option value="">タイプ：すべて</option><option>キュート</option><option>クール</option><option>セクシー</option><option>ポップ</option><option>不明</option></select>
+    <select id="brand"><option value="">ブランド：すべて</option></select>
+    <select id="rarity"><option value="">レア度：すべて</option><option>N</option><option>R</option><option>SR</option><option>PR</option><option>CP</option><option>その他</option></select>
+  </div>
+  <div style="margin-top:9px"><select id="ownedFilter" style="max-width:220px"><option value="">所持状況：すべて</option><option value="owned">所持</option><option value="notowned">未所持</option></select></div>
+</section>
+<div class="stats" id="stats"></div>
+<section id="completion" style="margin-bottom:18px"></section>
+
+<section id="grid" class="grid"></section>
+</main>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+<div class="panel">
+<h2>カードを追加</h2>
+<div class="form">
+<div class="field full"><label>カード画像</label><div class="preview" id="preview">画像を選択してください</div><input id="image" type="file" accept="image/*"></div>
+<div class="field"><label>カード名</label><input id="name" placeholder="例：スターライトワンピ"></div>
+<div class="field"><label>カード番号</label><input id="number" placeholder="例：01-01"></div>
+<div class="field"><label>弾数</label><input id="seriesInput" placeholder="例：第1弾"></div>
+<div class="field"><label>区分</label><select id="promoInput"><option>通常</option><option>プロモ</option></select></div>
+<div class="field"><label>タイプ</label><select id="typeInput"><option>キュート</option><option>クール</option><option>セクシー</option><option>ポップ</option><option>不明</option></select></div>
+<div class="field"><label>ブランド</label><input id="brandInput" placeholder="ブランド名"></div>
+<div class="field"><label>レア度</label><select id="rarityInput"><option>N</option><option>R</option><option>SR</option><option>PR</option><option>CP</option><option>その他</option></select></div>
+<div class="field"><label>メモ</label><input id="memoInput" placeholder="自由にメモ"></div>
+</div>
+<p class="note">※画像はこのブラウザ内に保存されます。データ保存でJSONを書き出せます。</p>
+<div class="modalfoot"><button class="btn" onclick="closeModal()">キャンセル</button><button class="btn primary" onclick="saveCard()">追加する</button></div>
+</div></div>
+
+<script>
+const KEY="aikatsu-encore-cards-v1";
+let cards=JSON.parse(localStorage.getItem(KEY)||"[]");
+let selectedImage="";
+const $=id=>document.getElementById(id);
+
+function saveLocal(){localStorage.setItem(KEY,JSON.stringify(cards));}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function uniq(a){return [...new Set(a.filter(Boolean))].sort((x,y)=>String(x).localeCompare(String(y),"ja"))}
+
+
+function renderCompletion(){
+ const el=$("completion");
+ const series=uniq(cards.map(c=>c.series));
+ if(!series.length){el.innerHTML="";return}
+ const rows=series.map(s=>{
+   const list=cards.filter(c=>c.series===s);
+   const owned=list.filter(c=>c.owned).length;
+   const pct=list.length?Math.round(owned/list.length*100):0;
+   return `<div class="completion-card">
+     <div class="completion-top"><span>${esc(s)}</span><span>${pct}%</span></div>
+     <div class="progress"><i style="width:${pct}%"></i></div>
+     <div class="completion-sub"><span>${owned} / ${list.length} 枚所持</span><span>${list.length-owned} 枚未所持</span></div>
+   </div>`;
+ }).join("");
+ el.innerHTML=`<div style="font-weight:900;margin:4px 0 10px">📊 弾別コンプリート率</div>
+ <div class="completion-grid">${rows}</div>`;
+}
+
+function render(){
+ renderCompletion();
+ const q=$("search").value.trim().toLowerCase();
+ const fs={series:$("series").value,promo:$("promo").value,type:$("type").value,brand:$("brand").value,rarity:$("rarity").value};
+ const ownership=$("ownedFilter").value;
+ const filtered=cards.filter(c=>{
+   const text=[c.name,c.number,c.series,c.promo,c.type,c.brand,c.rarity,c.memo].join(" ").toLowerCase();
+   const ownershipOK=!ownership || (ownership==="owned" ? !!c.owned : !c.owned);
+   return (!q||text.includes(q)) && ownershipOK && Object.entries(fs).every(([k,v])=>!v||c[k]===v);
+ });
+ $("total").textContent=filtered.length;
+ $("stats").innerHTML=`<span class="chip">登録 ${cards.length}枚</span><span class="chip">表示 ${filtered.length}枚</span>`;
+ $("grid").innerHTML=filtered.length?filtered.map(c=>`
+ <article class="card">
+   <button class="fav" onclick="toggleFav('${c.id}')" title="お気に入り">${c.fav?"★":"☆"}</button>
+   <button class="owned-badge ${c.owned?"owned":"notowned"}" onclick="toggleOwned('${c.id}')" title="所持状況を切り替え">${c.owned?"✓ 所持":"未所持"}</button>
+   <div class="thumb">${c.image?`<img src="${c.image}" alt="">`:`<div class="placeholder">♡</div>`}</div>
+   <div class="cardbody"><div class="name">${esc(c.name||"名称未設定")}</div>
+   <div class="cardno">${esc(c.number||"カード番号なし")}</div>
+   <div class="meta">${[c.series,c.promo,c.type,c.brand,c.rarity].filter(Boolean).map(x=>`<span class="tag">${esc(x)}</span>`).join("")}</div></div>
+ </article>`).join(""):`<div class="empty" style="grid-column:1/-1">カードが見つかりません。<br>条件を変えるか、「＋ カード追加」から登録してみてください。</div>`;
+}
+
+function updateFilters(){
+ const configs=[["series",uniq(cards.map(c=>c.series))],["brand",uniq(cards.map(c=>c.brand))]];
+ configs.forEach(([id,vals])=>{
+   const el=$(id), old=el.value;
+   el.innerHTML=`<option value="">${id==="series"?"弾数":"ブランド"}：すべて</option>`+vals.map(v=>`<option>${esc(v)}</option>`).join("");
+   el.value=vals.includes(old)?old:"";
+ });
+}
+function openModal(){$("modal").classList.add("show")}
+function closeModal(){$("modal").classList.remove("show");selectedImage="";$("preview").innerHTML="画像を選択してください";$("image").value=""}
+$("image").onchange=e=>{
+ const f=e.target.files[0]; if(!f)return;
+ const r=new FileReader();r.onload=()=>{selectedImage=r.result;$("preview").innerHTML=`<img src="${selectedImage}">`};r.readAsDataURL(f);
+};
+function saveCard(){
+ const c={id:crypto.randomUUID(),name:$("name").value,number:$("number").value,series:$("seriesInput").value,
+ promo:$("promoInput").value,type:$("typeInput").value,brand:$("brandInput").value,rarity:$("rarityInput").value,
+ memo:$("memoInput").value,image:selectedImage,fav:false,owned:false};
+ if(!c.name&&!c.number){alert("カード名かカード番号を入力してください。");return}
+ cards.unshift(c);saveLocal();updateFilters();render();closeModal();
+ ["name","number","seriesInput","brandInput","memoInput"].forEach(id=>$(id).value="");
+}
+function toggleOwned(id){const c=cards.find(x=>x.id===id);if(c){c.owned=!c.owned;saveLocal();render()}}
+function toggleFav(id){const c=cards.find(x=>x.id===id);if(c){c.fav=!c.fav;saveLocal();render()}}
+function exportData(){
+ const blob=new Blob([JSON.stringify(cards,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="aikatsu-encore-cards.json";a.click();
+}
+$("dataFile").onchange=e=>{
+ const f=e.target.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{
+  try{
+   let incoming;
+   if(f.name.toLowerCase().endsWith(".csv")){
+    const lines=r.result.split(/\r?\n/).filter(Boolean);const head=lines.shift().split(",");
+    incoming=lines.map(line=>{const v=line.split(",");let o={};head.forEach((h,i)=>o[h.trim()]=v[i]?.trim()||"");return o});
+   }else incoming=JSON.parse(r.result);
+   if(!Array.isArray(incoming))throw Error();
+   cards=[...incoming.map(c=>({...c,id:c.id||crypto.randomUUID(),owned:!!c.owned})),...cards];saveLocal();updateFilters();render();
+   alert(`${incoming.length}件を取り込みました。`);
+  }catch(err){alert("JSON/CSVを読み込めませんでした。")}
+ };r.readAsText(f,"UTF-8");e.target.value="";
+};
+["search","series","promo","type","brand","rarity","ownedFilter"].forEach(id=>$(id).addEventListener("input",render));
+updateFilters();render();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+}
+</script>
+</body></html>
